@@ -198,15 +198,9 @@ function _doPlot(gd, data, layout, config) {
             fullLayout._glcanvas = fullLayout._glcontainer.selectAll('.gl-canvas').data([{
                 key: 'contextLayer',
                 context: true,
-                pick: false
             }, {
                 key: 'focusLayer',
                 context: false,
-                pick: false
-            }, {
-                key: 'pickLayer',
-                context: false,
-                pick: true
             }], function(d) { return d.key; });
 
             fullLayout._glcanvas.enter().append('canvas')
