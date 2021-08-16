@@ -7,6 +7,7 @@ var showNoWebGlMsg = require('./show_no_webgl_msg');
 // so that bundles with non-regl only don't include
 // regl and all its bytes.
 var createRegl = require('regl');
+var extensions = ['ANGLE_instanced_arrays', 'OES_element_index_uint'];
 
 /**
  * Idempotent version of createRegl. Create regl instances
@@ -14,18 +15,17 @@ var createRegl = require('regl');
  * options
  *
  * @param {DOM node or object} gd : graph div object
- * @param {array} extensions : list of extension to pass to createRegl
  *
  * @return {boolean} true if all createRegl calls succeeded, false otherwise
  */
-module.exports = function prepareRegl(gd, extensions) {
+module.exports = function prepareRegl(gd) {
     var fullLayout = gd._fullLayout;
     var success = true;
 
     fullLayout._glcanvas.each(function(d) {
-        if(d.regl) return;
+        if(d.regl) return true;
         // only parcoords needs pick layer
-        if(d.pick && !fullLayout._has('parcoords')) return;
+        if(d.pick) return false;
 
         try {
             d.regl = createRegl({
@@ -35,7 +35,7 @@ module.exports = function prepareRegl(gd, extensions) {
                     preserveDrawingBuffer: true
                 },
                 pixelRatio: gd._context.plotGlPixelRatio || global.devicePixelRatio,
-                extensions: extensions || []
+                extensions: extensions
             });
         } catch(e) {
             success = false;

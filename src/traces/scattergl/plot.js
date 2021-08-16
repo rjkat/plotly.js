@@ -46,7 +46,7 @@ module.exports = function plot(gd, subplot, cdata) {
     // we may have more subplots than initialized data due to Axes.getSubplots method
     if(!scene) return;
 
-    var success = prepareRegl(gd, ['ANGLE_instanced_arrays', 'OES_element_index_uint']);
+    var success = prepareRegl(gd);
     if(!success) {
         scene.init();
         return;
