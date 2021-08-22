@@ -96,14 +96,15 @@ module.exports = extendFlat({
 
     delaunayaxis: {
         valType: 'enumerated',
-        values: [ 'x', 'y', 'z' ],
+        values: [ 'x', 'y', 'z', 'r' ],
         dflt: 'z',
         editType: 'calc',
         description: [
             'Sets the Delaunay axis, which is the axis that is perpendicular to the surface of the',
             'Delaunay triangulation.',
             'It has an effect if `i`, `j`, `k` are not provided and `alphahull` is set to indicate',
-            'Delaunay triangulation.'
+            'Delaunay triangulation.',
+            'If set to `r`, Delaunay triangulation will be performed in spherical coordinate space.'
         ].join(' ')
     },
 

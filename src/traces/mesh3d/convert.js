@@ -76,7 +76,47 @@ function toRoundIndex(a) {
     return b;
 }
 
+function cart2sph(c) {
+    var x = c[0];
+    var y = c[1];
+    var z = c[2];
+    var r = Math.sqrt(x * x + y * y + z * z);
+    var az = Math.atan2(y, x);
+    var el = r == 0 ? 0 : Math.acos(z / r);
+    return [r, el, az];
+}
+
+function sph2cart(s) {
+    var r = s[0];
+    var el = s[1];
+    var az = s[2];
+    var x = r * Math.cos(az) * Math.sin(el);
+    var y = r * Math.sin(az) * Math.sin(el);
+    var z = r * Math.cos(el);
+    return [x, y, z];
+}
+
+function polarTriangulate(positions) {
+    var b = [];
+    var len = positions.length;
+    for(var i = 0; i < len; i++) {
+        var sph = cart2sph(positions[i]);
+        b[i] = [sph[1], sph[2]];
+        b[i + len] = [sph[1], sph[2] + 2*Math.PI];
+    }
+    var cells = triangulate(b);
+    for (var i = 0; i < cells.length; i++) {
+        for (var j = 0; j < cells[i].length; j++) {
+            cells[i][j] %= len;
+        }
+    }
+    return cells;
+}
+
 function delaunayCells(delaunayaxis, positions) {
+    if (delaunayaxis == 'r') {
+        return polarTriangulate(positions);
+    }
     var d = ['x', 'y', 'z'].indexOf(delaunayaxis);
     var b = [];
     var len = positions.length;
