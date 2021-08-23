@@ -103,14 +103,45 @@ function polarTriangulate(positions) {
         var sph = cart2sph(positions[i]);
         b[i] = [sph[1], sph[2]];
         b[i + len] = [sph[1], sph[2] + 2*Math.PI];
+        b[i + 2*len] = [sph[1], sph[2] - 2*Math.PI];
     }
     var cells = triangulate(b);
+    var filtered = [];
+    var n = 0;
     for (var i = 0; i < cells.length; i++) {
-        for (var j = 0; j < cells[i].length; j++) {
-            cells[i][j] %= len;
+        var include = false;
+        for (var j = 0; j < 3; j++) {
+            var az = b[cells[i][j]][1];
+            if (az >= -Math.PI && az <= Math.PI) {
+                include = true;
+            }
+        }
+        if (!include) {
+            continue;
+        }
+        var candidate = [cells[i][0] % len, cells[i][1] % len, cells[i][2] % len];
+        if (candidate[0] == candidate[1] ||
+            candidate[0] == candidate[2] ||
+            candidate[1] == candidate[2]) {
+            continue;
+        }
+
+        var unique = true;
+        for (var k = 0; k < filtered.length; k++) {
+            if ((candidate[0] == filtered[k][0] &&
+                 candidate[1] == filtered[k][1] &&
+                 candidate[2] == filtered[k][2])) {
+                unique = false;
+                break;
+            }
+        }
+        if (unique) {
+            filtered[n] = candidate;
+            n++;
+            continue;
         }
     }
-    return cells;
+    return filtered;
 }
 
 function delaunayCells(delaunayaxis, positions) {
